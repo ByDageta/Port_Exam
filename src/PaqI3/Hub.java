@@ -68,7 +68,8 @@ public class Hub{
 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
-                hubPlan += this.hub[i][j].getIdentifier() + "   "; //Identifier of the container and Space to represent each column
+                if (this.hub[i][j].getIdentifier() == 0) hubPlan += "_   "; //X or _ and Space to represent each column
+                else hubPlan += "X   ";
             }
             if (i != ROWS -1) hubPlan += "\n"; //New line to represent each row + If statement to prevent new line after completing all rows
         }

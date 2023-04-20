@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 
 public class PortGUI extends JFrame {
     public final int NHUBS = 3; //NUMBER OF HUBS
-    Hub[] hub = new Hub[NHUBS]; //HUB (THERE ARE 3)
+    public Hub[] hub = new Hub[NHUBS]; //HUB (THERE ARE 3)
 
     //GUI
     private JPanel mainPanel;
@@ -38,9 +38,16 @@ public class PortGUI extends JFrame {
     public PortGUI() {
         setContentPane(mainPanel);
         setTitle("Manage hub");
-        setSize(1000, 750);
+        setSize(910, 600);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        for (int i = 0; i < NHUBS; i++) { //Initialize hubs
+            hub[i] = new Hub();
+        }
+        textState1.setText(hub[NHUBS - 3].toString()); //Initialize hub plan (state)
+        textState2.setText(hub[NHUBS - 2].toString());
+        textState3.setText(hub[NHUBS - 1].toString());
 
         //DISPLAY DATA FROM A CONTAINER ("Show container description" BUTTON)
         buttonShowDescription.addActionListener(new ActionListener() {
@@ -61,34 +68,44 @@ public class PortGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Container container = new Container(); //Create new container object
+                try {
+                    container.setIdentifier(Integer.parseInt(textID.getText())); //Set identifier
+                    try {
+                        container.setWeight(Integer.parseInt(textWeight.getText())); //Set weight (Multiply by 1000 to go from tons to kg)
+                        container.setCountry((String) comboBoxCountry2.getSelectedItem()); //Set country
+                        container.setInspected(checkBoxInspection.isSelected()); //Set inspected
+                        if (RadioButton1.isSelected()) container.setPriorityLevel(1); //Set priority (1 if 1 is checked)
+                        else if (RadioButton2.isSelected()) container.setPriorityLevel(2); //2 if 2 is checked
+                        else if (RadioButton3.isSelected()) container.setPriorityLevel(3); //3 if 3 is checked or no one is checked
+                        else JOptionPane.showMessageDialog(mainPanel, "ERROR: Select a priority for the container!");
 
-                container.setIdentifier(Integer.parseInt(textID.getText())); //Set identifier
-                container.setWeight(Integer.parseInt(textWeight.getText())); //Set weight (Multiply by 1000 to go from tons to kg)
-                container.setCountry((String) comboBoxCountry2.getSelectedItem()); //Set country
-                container.setInspected(checkBoxInspection.isSelected()); //Set inspected
-                if (RadioButton1.isSelected()) container.setPriorityLevel(1); //Set priority (1 if 1 is checked)
-                else if (RadioButton2.isSelected()) container.setPriorityLevel(2); //2 if 2 is checked
-                else container.setPriorityLevel(3); //3 if 3 is checked or no one is checked
-                container.setDescription(textDescription.getText()); //Set description
-                container.setCompanySends(textCompanySends.getText()); //Set company that sends it
-                container.setCompanyReceives(textCompanyReceives.getText()); //Set company that receives it
+                        if (RadioButton1.isSelected() || RadioButton2.isSelected() || RadioButton3.isSelected()) {
+                            container.setDescription(textDescription.getText()); //Set description
+                            container.setCompanySends(textCompanySends.getText()); //Set company that sends it
+                            container.setCompanyReceives(textCompanyReceives.getText()); //Set company that receives it
 
-                String confirmationMessage; //Stack container in the corresponding hub checking if they are full or not
-                if (container.priorityLevel == 1) {
-                    if (!hub[NHUBS - 3].isPriority1full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
-                    else if (!hub[NHUBS - 2].isPriority1full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
-                    else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
-                } else if (container.priorityLevel == 2) {
-                    if (!hub[NHUBS - 3].isPriority2full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
-                    else if (!hub[NHUBS - 2].isPriority2full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
-                    else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
-                } else {
-                    if (!hub[NHUBS - 3].isPriority3full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
-                    else if (!hub[NHUBS - 2].isPriority3full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
-                    else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
+                            String confirmationMessage; //Stack container in the corresponding hub checking if they are full or not
+                            if (container.priorityLevel == 1) {
+                                if (!hub[NHUBS - 3].isPriority1full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
+                                else if (!hub[NHUBS - 2].isPriority1full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
+                                else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
+                            } else if (container.priorityLevel == 2) {
+                                if (!hub[NHUBS - 3].isPriority2full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
+                                else if (!hub[NHUBS - 2].isPriority2full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
+                                else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
+                            } else {
+                                if (!hub[NHUBS - 3].isPriority3full()) confirmationMessage = hub[NHUBS - 3].stackContainer(container);
+                                else if (!hub[NHUBS - 2].isPriority3full()) confirmationMessage = hub[NHUBS - 2].stackContainer(container);
+                                else confirmationMessage = hub[NHUBS - 1].stackContainer(container);
+                            }
+                            JOptionPane.showMessageDialog(mainPanel, confirmationMessage); //Show confirmation message + stack container using hub method
+                        }
+                    } catch (NumberFormatException exception) {
+                        JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value for the weight!");
+                    }
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value for the ID!");
                 }
-                JOptionPane.showMessageDialog(mainPanel, confirmationMessage); //Show confirmation message + stack container using hub method
-
                 textState1.setText(hub[NHUBS - 3].toString()); //Update hub plan (state)
                 textState2.setText(hub[NHUBS - 2].toString());
                 textState3.setText(hub[NHUBS - 1].toString());
