@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 
 public class PortGUI extends JFrame {
     public final int NHUBS = 3; //NUMBER OF HUBS
@@ -54,13 +55,18 @@ public class PortGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textDescription2.setForeground(new Color(0, 0, 0));
-                int identifier = Integer.parseInt(JOptionPane.showInputDialog("Enter ID of the container you want to get data from\n")); //Show message asking for ID and assign it
-                String message = "Could not find any container with that ID."; //Message to be displayed (defaults to not have found any container)
-                for (int i = 0; i < NHUBS; i++) {
-                    message = hub[i].displayContainerData(identifier);
-                    if (!message.equals("Could not find any container with that ID.")) break; //Exit for loop after finding a container with that ID
+
+                try {
+                    int identifier = Integer.parseInt(JOptionPane.showInputDialog("Enter ID of the container you want to get data from\n")); //Show message asking for ID and assign it
+                    String message = "Could not find any container with that ID."; //Message to be displayed (defaults to not have found any container)
+                    for (int i = 0; i < NHUBS; i++) {
+                        message = hub[i].displayContainerData(identifier);
+                        if (!message.equals("Could not find any container with that ID.")) break; //Exit for loop after finding a container with that ID
+                    }
+                    textDescription2.setText(message); //Display data
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value!");
                 }
-                textDescription2.setText(message); //Display data
             }
         });
         //STACK CONTAINER ("Pile" BUTTON)
@@ -115,14 +121,23 @@ public class PortGUI extends JFrame {
         buttonUnpile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int column = Integer.parseInt(JOptionPane.showInputDialog("From which COLUMN you want to remove a container?\n\t(First column to the left is 1)\n")); //Show message asking for column and assign it
-                int hubNumber = Integer.parseInt(JOptionPane.showInputDialog("From which HUB you want to remove a container (in column " + column + ")?\n"));
+                int column = 0, hubNumber = 0;
+                try {
+                    column = Integer.parseInt(JOptionPane.showInputDialog("From which COLUMN you want to remove a container?\n\t(First column to the left is 1)\n")); //Show message asking for column and assign it
+                    try {
+                        hubNumber = Integer.parseInt(JOptionPane.showInputDialog("From which HUB you want to remove a container (in column " + column + ")?\n"));
+                        JOptionPane.showMessageDialog(mainPanel, hub[hubNumber - 1].removeContainer(column)); //Remove container using hub method
 
-                JOptionPane.showMessageDialog(mainPanel, hub[hubNumber - 1].removeContainer(column)); //Remove container using hub method
+                        if (column == 1) hub[hubNumber - 1].setPriority1full(false); //If that column was full, set it to not full
+                        else if (column == 2) hub[hubNumber - 1].setPriority2full(false);
+                        else hub[hubNumber - 1].setPriority3full(false);
 
-                if (column == 1) hub[hubNumber - 1].setPriority1full(false); //If that column was full, set it to not full
-                else if (column == 2) hub[hubNumber - 1].setPriority2full(false);
-                else hub[hubNumber - 1].setPriority3full(false);
+                    } catch (NumberFormatException exception) {
+                        JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value!");
+                    }
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value!");
+                }
 
                 textState1.setText(hub[NHUBS - 3].toString()); //Update hub plan (state)
                 textState2.setText(hub[NHUBS - 2].toString());
