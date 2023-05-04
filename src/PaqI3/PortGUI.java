@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
 
 public class PortGUI extends JFrame {
     public final int NHUBS = 3; //NUMBER OF HUBS
@@ -37,6 +36,9 @@ public class PortGUI extends JFrame {
     private JTextArea textState2;
     private JTextField textNumberContainers;
     public JLabel imageCompany;
+    private JButton examMarkAsCheckedButton;
+    private JTextField examWeightHereTextField;
+    private JComboBox examComboBox;
 
     public PortGUI() {
         setContentPane(mainPanel);
@@ -187,6 +189,40 @@ public class PortGUI extends JFrame {
                 if (textDescription.getText().equals("Give a description of the container")) {
                     textDescription.setText("");
                     textDescription.setForeground(new Color(0, 0, 0));
+                }
+            }
+        });
+
+
+        //EXAM PART - EXERCISES 6 AND 7
+        examWeightHereTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (examWeightHereTextField.getText().equals("Put weight here (in tons)")) {
+                    examWeightHereTextField.setText("");
+                    examWeightHereTextField.setForeground(new Color(0, 0, 0));
+                }
+            }
+        });
+        examMarkAsCheckedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int weight;
+                String hubNumber, info;
+                try {
+                    weight = Integer.parseInt(examWeightHereTextField.getText()); //Convert text to integer
+                    hubNumber = (String) examComboBox.getSelectedItem(); //Get selected hub from combo box
+
+                    switch (hubNumber) { //Call method from different hubs depending on the selected one
+                        case "From HUB 1" -> info = hub[0].checkWeight(weight, 0);
+                        case "From HUB 2" -> info = hub[1].checkWeight(weight, 1);
+                        case "From HUB 3" -> info = hub[2].checkWeight(weight, 2);
+                        default -> info = "Somehow this didn't work";
+                    }
+                    JOptionPane.showMessageDialog(mainPanel, info); //Show message with the information obtained
+
+                } catch (NumberFormatException exception) { //Show error message if the value entered for weight is not valid
+                    JOptionPane.showMessageDialog(mainPanel, "ERROR: Enter a valid value for weight!");
                 }
             }
         });

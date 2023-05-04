@@ -167,7 +167,7 @@ public class Hub{
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 Container container = this.hub[i][j]; //Variable to identify current container
-                if (container.getWeight() <= weightInTons) { //Checks if the weight is less or equal to the argument passed
+                if (container.getWeight() != 0 && container.getWeight() <= weightInTons) { //Checks if the weight is less or equal to the argument passed
                     container.setInspected(true);
                     info += "Checked container with ID " + container.getIdentifier() + ", Weight: " + container.getWeight() + ", Sender company: " + container.getCompanySends() + ", Checked: " + container.isInspected() + "\n";
                 }

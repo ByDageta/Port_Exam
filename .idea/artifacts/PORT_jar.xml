@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/PORT_jar</output-path>
     <root id="archive" name="PORT.jar">
       <element id="module-output" name="PORT" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/PORT.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
