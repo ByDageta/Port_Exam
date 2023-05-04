@@ -1,3 +1,5 @@
+//DAVID GARCÍA GUIRADO - GROUP I
+
 package PaqI3;
 
 /*
@@ -156,5 +158,21 @@ public class Hub{
             }
         }
         return count; //Return the number of containers from that country
+    }
+
+
+    //EXAM EXERCISE 1. METHOD TO CHECK CONTAINERS WHOSE WEIGHT IS LESS OR EQUAL THAN A GIVEN
+    public String checkWeight(int weightInTons, int hubNumber) { //Receives as arguments weight and hub number
+        String info = ""; //String to return with the information of the checked containers
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                Container container = this.hub[i][j]; //Variable to identify current container
+                if (container.getWeight() <= weightInTons) { //Checks if the weight is less or equal to the argument passed
+                    container.setInspected(true);
+                    info += "Checked container with ID " + container.getIdentifier() + ", Weight: " + container.getWeight() + ", Sender company: " + container.getCompanySends() + ", Checked: " + container.isInspected() + "\n";
+                }
+            }
+        }
+        return info; //Return string with all the information
     }
 }
